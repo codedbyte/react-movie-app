@@ -1,5 +1,6 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect,  useState} from 'react'
 import Search from './assets/components/Search.jsx'
+import Spinner from './assets/components/Spinner.jsx';
 
 const API_BASE_URL = 'https://api.themoviedb.org/3/';
 
@@ -16,7 +17,7 @@ const API_OPTIONS = {
 const App = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [movieList, setMovieList] = useState('');
+  const [movieList, setMovieList] = useState([]);
   const [loadingState, setLoadingState] = useState(false);
 
 
@@ -37,8 +38,8 @@ const App = () => {
 
       console.log(data);
 
-      if (data.Response === "False"){
-        console.error(data.Error || 'Failed to Fetch Movie');
+      if (data.response === "False"){
+        console.error(data.error || 'Failed to Fetch Movie');
         setMovieList([]);
         return;
       }
@@ -77,7 +78,15 @@ const App = () => {
         <section className="all-movies">
           <h2>All Movies</h2>
 
-          {errorMessage && <p className="error text-red-500">{errorMessage}</p>}
+          {loadingState ? (
+            <Spinner />
+          ) : errorMessage ? (
+            <p className='text-red-500'>{errorMessage}</p>
+          ) : (<ul>
+                {movieList.map((movie) => (
+                  <p key={movie.id} className='text-white'>{movie.title}</p>
+                ) )}
+            </ul>)}
         </section>
       </div>
     </main>
